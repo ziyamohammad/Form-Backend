@@ -57,7 +57,7 @@ const sessionMiddleware = session({
 const registerStudent = asyncHandler(async (req, res) => {
     // Apply session middleware here to ensure req.session is available
     sessionMiddleware(req, res, async () => {
-        const { fullName, studentNumber, gender,rollNumber, mobileNumber, studentEmail, branch, year, section, residence } = req.body;
+        const { fullName, studentNumber, gender,rollNumber, mobileNumber, studentEmail, branch, scholar } = req.body;
         const userIp = req.headers['x-forwarded-for'] || req.ip;
 
         const registrationCount = await Student.countDocuments({ ip: userIp });
@@ -98,7 +98,7 @@ const registerStudent = asyncHandler(async (req, res) => {
 
         req.session.userData = {
             fullName, studentNumber, gender, mobileNumber, studentEmail,
-            branch, year, section, residence, ip: userIp, otpExpiry,rollNumber
+            branch, scholar, ip: userIp, otpExpiry,rollNumber
         };
 
         const otpSent = await sendOtp(studentEmail, otp);

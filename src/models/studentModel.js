@@ -39,17 +39,7 @@ const studentSchema = new Schema({
         type: String,
         required: [true, "branch is required"]
       },
-      year:{
-        type: Number,
-        required: [true,"year is required"],
-        min:1,
-        max:2
-      },
-      section: {
-        type: String,
-        required: [true, "Section is required"]
-      },
-    residence:{
+    scholar:{
         type: String,
         required:[true,"residence is required"]
     },
