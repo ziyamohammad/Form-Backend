@@ -140,9 +140,7 @@ const verifyStudentRegistration = asyncHandler(async (req, res) => {
             mobileNumber: req.session.userData.mobileNumber,
             studentEmail: req.session.userData.studentEmail,
             branch: req.session.userData.branch,
-            year: req.session.userData.year,
-            section: req.session.userData.section,
-            residence: req.session.userData.residence,
+            scholar: req.session.userData.scholar,
             rollNumber: req.session.userData.rollNumber
         });
 
