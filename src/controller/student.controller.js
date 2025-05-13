@@ -4,6 +4,7 @@ import { Student } from "../models/studentModel.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import nodemailer from "nodemailer";
 import session from "express-session";
+import axios from "axios";
 
 const otpStore = new Map();
 

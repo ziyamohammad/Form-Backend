@@ -11,6 +11,6 @@ router.route("/verify").post(verifyStudentRegistration);
 
 router.route("/verify-captcha").post(verifyCaptcha);
 
-router.route("/resend-otp").post(resendOTP);
+router.route("/resend-otp").get(resendOTP);
 
 export default router
