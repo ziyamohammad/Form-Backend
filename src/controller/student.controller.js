@@ -41,17 +41,17 @@ const transporter = nodemailer.createTransport({
                     }
                 }
 
-// Initialize session middleware
-const sessionMiddleware = session({
-    secret: 'your-secret-key',  // Replace with a strong, random secret key
-    resave: false,
-    saveUninitialized: false, // Changed to false
-    cookie: { 
-        secure: false, // Set to true in production with HTTPS
-        httpOnly: true, // Added httpOnly for security
-        maxAge: 5 * 60 * 1000, // 5 minutes (same as OTP expiry)
-    }, 
-});
+// // Initialize session middleware
+// const sessionMiddleware = session({
+//     secret: 'your-secret-key',  // Replace with a strong, random secret key
+//     resave: false,
+//     saveUninitialized: false, // Changed to false
+//     cookie: { 
+//         secure: false, // Set to true in production with HTTPS
+//         httpOnly: true, // Added httpOnly for security
+//         maxAge: 5 * 60 * 1000, // 5 minutes (same as OTP expiry)
+//     }, 
+// });
 
 
 const registerStudent = asyncHandler(async (req, res) => {

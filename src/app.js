@@ -1,43 +1,48 @@
-import express from "express"
-
-// import cors from "cors" //allows who can make a request to the server
+// App.js
+import express from "express";
 import session from "express-session";
-import cookieParser from "cookie-parser"
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 
-const app= express();
+dotenv.config();  // Load environment variables
 
-// middleware - in between configuration to do a certain task over the code
-// app.use(
-//     cors({
-//         origin: process.env.CORS_ORIGIN,
-//         credentials: true
-//     })
-// )
+const app = express();
 
-// Use the session middleware
-app.use(session({
-    secret: process.env.SECRET_KEY,  // Replace with a strong, random secret key
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false,  // Set to true in production with HTTPS
-        httpOnly: true,
-        maxAge: 5 * 60 * 1000, // 5 minutes
-    },
-}));
+// 1. Middleware for JSON and URL-encoded data
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
 
-app.use(express.json({limit:"16kb"}))
-app.use(express.urlencoded({extended:true, limit:"16kb"}))
-app.use(express.static("public"))
-app.use(cookieParser())
+// 2. Session Middleware
+app.use(
+    session({
+        secret: process.env.SECRET_KEY || "fallback-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: process.env.NODE_ENV === "production",
+            httpOnly: true,
+            maxAge: 5 * 60 * 1000, // 5 minutes
+        },
+    })
+);
 
-// routes
+// 3. Static File Serving (Optional)
+app.use(express.static("public"));
 
-import  userRegister  from "./route/students.routes.js";
+// 4. Test Session Middleware (Optional, remove in production)
+app.use((req, res, next) => {
+    console.log("Session Data:", req.session);
+    next();
+});
+
+// 5. Routes
+import userRegister from "./route/students.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { registerLimiter } from "./middlewares/rateLimiter.js";
 
-app.use("/api/v1/student",userRegister)
-app.use(errorHandler)
-app.use(registerLimiter)
-export { app }
+app.use("/api/v1/student", userRegister);
+app.use(registerLimiter);
+app.use(errorHandler);
+
+export { app };
