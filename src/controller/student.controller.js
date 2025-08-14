@@ -17,11 +17,20 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-                function generateOtp() {
-                    // return crypto.randomInt(100000, 999999).toString(); 
-                    return Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-                }
+function generateOtp() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
 
+  const randomLetter = () =>
+    letters.charAt(Math.floor(Math.random() * letters.length));
+  const randomNumber = () =>
+    numbers.charAt(Math.floor(Math.random() * numbers.length));
+
+  // 2 letters + 2 numbers
+  let otp = randomLetter() + randomLetter() + randomNumber() + randomNumber();
+
+  return otp;
+}
                 async function sendOtp(email, otp) {
                     const mailOptions = {
                         from: process.env.EMAIL, 
