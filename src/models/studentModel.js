@@ -43,6 +43,11 @@ const studentSchema = new Schema({
         type: String,
         required:[true,"residence is required"]
     },
+    domain:{
+        type: String,
+        required:[true, "Domain is required"]
+    },
+    ip: { type: String }
     },
     { timestamps: true }
 )

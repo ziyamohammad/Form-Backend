@@ -1,3 +1,4 @@
 .env
 ./src/refreshToken.js
 node_modules
+.git

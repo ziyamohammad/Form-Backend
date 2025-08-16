@@ -6,29 +6,37 @@ import nodemailer from "nodemailer";
 import session from "express-session";
 import axios from "axios";
 
-const otpStore = new Map();
 
 const transporter = nodemailer.createTransport({
     service: 'gmail', 
-    secure: true,
-    port: 465,   //Gmail generally operates on it.
+    secure: false,
+    port: 587,   //Gmail generally operates on it.
     auth: {
         user: process.env.EMAIL,  // Email address through which email is sent (e.g., your email@gmail.com)
         pass: process.env.PASSWORD,
     },
 });
 
-                function generateOtp() {
-                    // return crypto.randomInt(100000, 999999).toString(); 
-                    return Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-                }
+function generateOtp() {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers = "0123456789";
 
+  const randomLetter = () =>
+    letters.charAt(Math.floor(Math.random() * letters.length));
+  const randomNumber = () =>
+    numbers.charAt(Math.floor(Math.random() * numbers.length));
+
+  // 2 letters + 2 numbers
+  let otp = randomLetter() + randomLetter() + randomNumber() + randomNumber();
+
+  return otp;
+}
                 async function sendOtp(email, otp) {
                     const mailOptions = {
                         from: process.env.EMAIL, 
                         to: email,                
-                        subject: 'Your OTP for Registration for Trained&Tuned-25', 
-                        text: `Your OTP is: ${otp}. It will expire in 5 minutes.\n\nRegards,\nMLCOE\nOwner` 
+                        subject: 'Your OTP for Registration for The Turing Test-25', 
+                        text: `Your OTP is: ${otp}. It will expire in 3 minutes.\n\nRegards,\nMLCOE\nOwner` 
                     };
 
                     try {
@@ -43,7 +51,7 @@ const transporter = nodemailer.createTransport({
 
 
 const registerStudent = asyncHandler(async (req, res) => {
-    const { fullName, studentNumber, gender, rollNumber, mobileNumber, studentEmail, branch, scholar } = req.body;
+    const { fullName, studentNumber, gender, rollNumber, mobileNumber, studentEmail, branch, scholar, domain } = req.body;
     const userIp = req.headers['x-forwarded-for'] || req.ip;
 
     const registrationCount = await Student.countDocuments({ ip: userIp });
@@ -55,13 +63,14 @@ const registerStudent = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Must Enter College Email Id Only");
     }
 
-    if (!(studentNumber.startsWith('23') || studentNumber.startsWith('24'))) {
+    if (!studentNumber.startsWith('24')) {
         throw new ApiError(401, "Unauthorized student Number");
     }
 
     const emailExist = await Student.findOne({ studentEmail });
     const numberExist = await Student.findOne({ mobileNumber });
-    const studentExist = emailExist || numberExist;
+    const stNumExist= await Student.findOne({studentNumber});
+    const studentExist = emailExist || numberExist || stNumExist;
 
     if (mobileNumber.length !== 10 || isNaN(Number(mobileNumber))) {
         throw new ApiError(400, "Mobile Number is invalid");
@@ -73,14 +82,14 @@ const registerStudent = asyncHandler(async (req, res) => {
 
     // Generate OTP
     const otp = generateOtp();
-    const otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+    const otpExpiry = Date.now() + 3 * 60 * 1000; // 3 minutes
 
     // Store OTP in session
     req.session.otp = otp;
     req.session.otpExpiry = otpExpiry;
     req.session.userData = {
         fullName, studentNumber, gender, mobileNumber, studentEmail,
-        branch, scholar, ip: userIp, otpExpiry, rollNumber
+        branch, scholar, ip: userIp, otpExpiry, rollNumber, domain
     };
 
     const otpSent = await sendOtp(studentEmail, otp);
