@@ -14,7 +14,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 app.use(cors({
-    origin:process.env.CORS_ORIGIN,
+    origin:"https://genaievent.vercel.app",
     credentials:true
 }))
 // 2. Session Middleware
