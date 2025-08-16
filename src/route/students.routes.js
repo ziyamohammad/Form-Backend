@@ -9,7 +9,7 @@ router.route("/register").post(registerStudent);
 
 router.route("/verify").post(verifyStudentRegistration);
 
-router.route("/verify-captcha").post(verifyCaptcha);
+router.route("/validate").post(verifyCaptcha);
 
 router.route("/resend-otp").get(resendOTP);
 

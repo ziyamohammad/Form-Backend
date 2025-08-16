@@ -63,7 +63,7 @@ const registerStudent = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Must Enter College Email Id Only");
     }
 
-    if (!studentNumber.startsWith('24')) {
+    if (!studentNumber.startsWith('23') && !studentNumber.startsWith('24')) {
         throw new ApiError(401, "Unauthorized student Number");
     }
 
@@ -167,11 +167,9 @@ const verifyCaptcha = async (req, res) => {
 };
 
 const resendOTP = asyncHandler(async (req, res) => {
-    sessionMiddleware(req, res, async () => {
-        if (!req.session.userData) {
-            throw new ApiError(400, "User data not found in session. Please start registration again.");
-        }
-
+     if (!req.session.userData || !req.session.userData.studentEmail) {
+        throw new ApiError(400, "User data not found in session. Please start registration again.");
+    }
         const { studentEmail } = req.session.userData;
         const newOtp = generateOtp();
 
@@ -188,6 +186,6 @@ const resendOTP = asyncHandler(async (req, res) => {
 
         res.status(200).json(new ApiResponse(200, { studentEmail }, "OTP resent successfully."));
     });
-});
+
 
 export { registerStudent, verifyStudentRegistration,verifyCaptcha,resendOTP };
